@@ -1,0 +1,16 @@
+# ビルド出力
+/build/
+
+# Eclipse設定
+.classpath
+.project
+/.settings/
+
+# Tomcat / Eclipse 自動生成
+tmp*/
+wtpwebapps/
+*.log
+
+# OS固有
+.DS_Store
+Thumbs.db
