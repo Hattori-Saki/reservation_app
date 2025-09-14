@@ -1,4 +1,5 @@
 <!-- 予約入力画面 -->
+
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
@@ -7,6 +8,16 @@
 <meta charset="UTF-8">
 <title>簡易予約システム</title>
 <link rel="stylesheet" href="style.css">
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		var calendarEl = document.getElementById('calendar');
+		var calendar = new FullCalendar.Calendar(calendarEl, {
+			initialView: 'dayGridMonth'
+				})
+		calendar.render();
+		});
+</script>
 </head>
 <body>
 	<div class="container">
@@ -19,11 +30,11 @@
 				<span class="error-message"><c:out value="${errorMessage}" /></span>
 			</p>
 			<p>
-				<label for="reservation_time">希望日時:</label> <input
-					type="datetime-local" id="reservation_time" name="reservation_time"
-					value="<c:out
-value="${param.reservation_time}"/>" required>
+				<label for="reservation_time">希望日時:</label>
+				<input type="datetime-local" id="reservation_time" name="reservation_time"
+					value="<c:out value="${param.reservation_time}"/>" required>
 				<span class="error-message"><c:out value="${errorMessage}" /></span>
+				<!-- <div id='calendar'></div> -->
 			</p>
 			<div class="button-group">
 				<input type="submit" value="予約する">
@@ -52,7 +63,12 @@ value="${param.reservation_time}"/>" required>
 
 		<div class="button-group">
 			<a href="reservation?action=list" class="button secondary">予約一覧を見る</a>
+			<a href="reservation?action=login" class="button secondary">ログイン</a>
 		</div>
 	</div>
+
+	<!-- FullCallender 初期化コード -->
+
+
 </body>
 </html>

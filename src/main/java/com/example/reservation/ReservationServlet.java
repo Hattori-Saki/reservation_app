@@ -17,10 +17,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 
-// 画面制御や機能処理 アノテーションを自分で追加した。エラーが起きたら消すこと
+// 画面制御や機能処理
+// アノテーションを自分で追加した。エラーが起きたら消すこと
 @WebServlet("/reservation")
+
 @MultipartConfig
+
 public class ReservationServlet extends HttpServlet {
+
 	private final ReservationDAO reservationDAO = new ReservationDAO();
 
 	@Override
@@ -55,19 +59,32 @@ public class ReservationServlet extends HttpServlet {
 
 			RequestDispatcher rd = req.getRequestDispatcher("/jsp/list.jsp");
 			rd.forward(req, resp);
-		} else if ("edit".equals(action)) {
+		}
+
+		else if ("edit".equals(action)) {
 			int id = Integer.parseInt(req.getParameter("id"));
 			Reservation reservation = reservationDAO.getReservationById(id);
 			req.setAttribute("reservation", reservation);
 			RequestDispatcher rd = req.getRequestDispatcher("/jsp/edit.jsp");
 			rd.forward(req, resp);
-		} else if ("export_csv".equals(action)) {
+		}
+
+		else if ("export_csv".equals(action)) {
 			exportCsv(req, resp);
-		} else if ("clean_up".equals(action)) {
+		}
+
+		else if ("clean_up".equals(action)) {
 			reservationDAO.cleanUpPastReservations();
 			req.setAttribute("successMessage", "過去の予約をクリーンアップしました。");
 			resp.sendRedirect("reservation?action=list");
-		} else {
+		}
+
+		else if ("login".equals(action)) {
+			RequestDispatcher rd = req.getRequestDispatcher("/jsp/login.jsp");
+			rd.forward(req, resp);
+		}
+
+		else {
 			resp.sendRedirect("index.jsp");
 		}
 	}
@@ -108,12 +125,16 @@ public class ReservationServlet extends HttpServlet {
 					return;
 				}
 				resp.sendRedirect("reservation?action=list");
-			} catch (DateTimeParseException e) {
+			}
+
+			catch (DateTimeParseException e) {
 				req.setAttribute("errorMessage", "有効な日時を入力してください。");
 				RequestDispatcher rd = req.getRequestDispatcher("/index.jsp");
 				rd.forward(req, resp);
 			}
-		} else if ("update".equals(action)) {
+		}
+
+		else if ("update".equals(action)) {
 			int id = Integer.parseInt(req.getParameter("id"));
 			String name = req.getParameter("name");
 			String reservationTimeString = req.getParameter("reservation_time");
@@ -124,6 +145,7 @@ public class ReservationServlet extends HttpServlet {
 				rd.forward(req, resp);
 				return;
 			}
+
 			if (reservationTimeString == null || reservationTimeString.trim().isEmpty()) {
 				req.setAttribute("errorMessage", "希望日時は必須です。");
 				RequestDispatcher rd = req.getRequestDispatcher("/jsp/edit.jsp");
@@ -139,6 +161,7 @@ public class ReservationServlet extends HttpServlet {
 					rd.forward(req, resp);
 					return;
 				}
+
 				if (!reservationDAO.updateReservation(id, name, reservationTime)) {
 					req.setAttribute("errorMessage", "同じ名前と日時での予約は既に存在します。");
 					RequestDispatcher rd = req.getRequestDispatcher("/jsp/edit.jsp");
@@ -146,16 +169,23 @@ public class ReservationServlet extends HttpServlet {
 					return;
 				}
 				resp.sendRedirect("reservation?action=list");
-			} catch (DateTimeParseException e) {
+			}
+
+			catch (DateTimeParseException e) {
 				req.setAttribute("errorMessage", "有効な日時を入力してください。");
 				RequestDispatcher rd = req.getRequestDispatcher("/jsp/edit.jsp");
 				rd.forward(req, resp);
 			}
-		} else if ("delete".equals(action)) {
+		}
+
+		else if ("delete".equals(action)) {
 			int id = Integer.parseInt(req.getParameter("id"));
 			reservationDAO.deleteReservation(id);
 			resp.sendRedirect("reservation?action=list");
-		} else if ("import_csv".equals(action)) {
+		}
+
+		else if ("import_csv".equals(action)) {
+
 			try {
 				Part filePart = req.getPart("csvFile");
 				if (filePart != null && filePart.getSize() > 0) {
@@ -164,17 +194,24 @@ public class ReservationServlet extends HttpServlet {
 						reservationDAO.importReservations(reader);
 						req.setAttribute("successMessage", "CSV ファイルのインポートが完了しました。");
 					}
-				} else {
+				}
+
+				else {
 					req.setAttribute("errorMessage", "インポートするファイルを選択してください。");
 				}
-			} catch (Exception e) {
+			}
+
+			catch (Exception e) {
 				req.setAttribute("errorMessage", "CSV ファイルのインポート中にエラーが発生しました: " +
 						e.getMessage());
 				e.printStackTrace();
 			}
+
 			RequestDispatcher rd = req.getRequestDispatcher("/jsp/list.jsp");
 			rd.forward(req, resp);
-		} else {
+		}
+
+		else {
 			resp.sendRedirect("index.jsp");
 		}
 	}
