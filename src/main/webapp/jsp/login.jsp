@@ -21,6 +21,7 @@
 		    </p>
 		    <div class="button-group">
 		    	<input type="submit" value="ログイン">
+		    	<a href="account?action=signup" class="button">新規登録</a>
 		    </div>
 		    <p style="color:red;"><c:out value="${errorMessage}" /></p>
 		</form>
